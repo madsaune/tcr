@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 )
 
 func main() {
 
 	args := os.Args
+
 	if len(args) == 1 {
 		fmt.Println("Channel is not specified")
 		os.Exit(1)
@@ -47,6 +49,6 @@ func main() {
 
 	// Join the twitch channel passed in from cmdline
 	// and listen for messages
-	client.Join(args[1])
+	client.Join("#" + strings.ToLower(args[1]))
 	client.Listen()
 }
