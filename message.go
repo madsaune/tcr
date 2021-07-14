@@ -1,8 +1,20 @@
 package main
 
 import (
+	"fmt"
 	"strings"
 	"time"
+)
+
+type Color string
+
+const (
+	ColorBlack  = "\u001b[30m"
+	ColorRed    = "\u001b[31m"
+	ColorGreen  = "\u001b[32m"
+	ColorYellow = "\u001b[33m"
+	ColorBlue   = "\u001b[34m"
+	ColorReset  = "\u001b[0m"
 )
 
 // Message is the PRIVMSG sent from server
@@ -25,6 +37,11 @@ func (m *Message) Parse(body string) {
 	m.Content = strings.Join(parts[3:], " ")[1:]
 	m.Timestamp = time.Now()
 
+}
+
+func (m *Message) Colorize(color Color, message string) string {
+	return fmt.Sprintf("%s%s%s", string(color), message, string(ColorReset))
+	// return fmt.Sprintf("%s", message)
 }
 
 func (m *Message) parseUsername(username string) string {

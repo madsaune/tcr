@@ -3,22 +3,25 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"math/rand"
 	"net"
 	"net/textproto"
 	"strings"
 )
 
 type Client struct {
-	TwitchHost string
-	Username   string
-	Token      string
+	TwitchHost         string
+	Username           string
+	Token              string
+	ShowStatusMessages bool
 
 	conn net.Conn
 }
 
 func NewClient() *Client {
 	return &Client{
-		TwitchHost: "irc.chat.twitch.tv:6667",
+		TwitchHost:         "irc.chat.twitch.tv:6667",
+		ShowStatusMessages: false,
 	}
 }
 
@@ -55,6 +58,9 @@ func (c *Client) Send(message string) {
 
 func (c *Client) Listen() {
 	// Read whats sent from server
+	var users = make(map[string]Color)
+	colors := [5]Color{ColorBlack, ColorRed, ColorGreen, ColorYellow, ColorBlue}
+
 	tp := textproto.NewReader(bufio.NewReader(c.conn))
 
 	for {
@@ -71,11 +77,22 @@ func (c *Client) Listen() {
 			// and can be parsed to look prettier
 			msg := &Message{}
 			msg.Parse(status)
-			fmt.Printf("[%s] %15s: %s\n", msg.Timestamp.Format("15:04:05"), msg.Username, msg.Content)
+
+			// Assign a random color for new users
+			currentUser := msg.Username
+			_, exists := users[currentUser]
+			if !exists {
+				users[currentUser] = colors[rand.Intn(len(colors))]
+			}
+			fmt.Printf("[%s] ", msg.Timestamp.Format("15:04:05"))
+			fmt.Printf("%25s", msg.Colorize(users[currentUser], msg.Username))
+			fmt.Printf(" | %s\n", msg.Content)
 		} else {
 			// Prints all messages that are not PING og PRIVMSG
 			// like connection information etc
-			fmt.Println(status)
+			if c.ShowStatusMessages {
+				fmt.Println(status)
+			}
 		}
 	}
 }

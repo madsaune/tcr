@@ -1,15 +1,22 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"math/rand"
 	"os"
 	"os/signal"
 	"strings"
 	"syscall"
+	"time"
 )
 
 func main() {
 
+	rand.Seed(time.Now().UTC().UnixNano())
+
+	showStatusMessages := flag.Bool("verbose", false, "Show server info messages")
+	flag.Parse()
 	args := os.Args
 
 	if len(args) == 1 {
@@ -32,6 +39,7 @@ func main() {
 
 	// Initialize the Twitch IRC client
 	client := NewClient()
+	client.ShowStatusMessages = *showStatusMessages
 
 	// Closes connection when CTRL+C is pressed
 	c := make(chan os.Signal)
