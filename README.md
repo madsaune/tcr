@@ -22,3 +22,12 @@ Then set your environment variables:
 export TCR_USERNAME=<username>
 export TCR_TOKEN=oauth:<token>
 ```
+
+## How to run
+
+First you must get a OAuth token as described above, and then set your ENV variables.
+
+```bash
+go get -u github.com/madsaune/tcr
+tcr esl_csgo # esl_csgo is the channel name
+```
