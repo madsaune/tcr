@@ -7,8 +7,9 @@ This project was created as a learning experience of how to setup a TCP client i
 ## TODO
 
 - [ ] Support TLS connection (port 6697)
-- [ ] Add color to usernames
-- [ ] Skip info messages by default. Add switch to show them.
+- [x] Add color to usernames
+- [x] Skip info messages by default. Add switch to show them.
+- [ ] Add more colors to pick from
 
 ## Retrieve a token
 
