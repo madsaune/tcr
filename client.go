@@ -59,14 +59,27 @@ func (c *Client) Send(message string) {
 func (c *Client) Listen() {
 	// Read whats sent from server
 	var users = make(map[string]Color)
-	colors := [5]Color{ColorBlack, ColorRed, ColorGreen, ColorYellow, ColorBlue}
+	colors := [12]Color{
+		ColorRed,
+		ColorRedBright,
+		ColorGreen,
+		ColorGreenBright,
+		ColorYellow,
+		ColorYellowBright,
+		ColorBlue,
+		ColorBlueBright,
+		ColorMagenta,
+		ColorMagentaBright,
+		ColorCyan,
+		ColorCyanBright,
+	}
 
 	tp := textproto.NewReader(bufio.NewReader(c.conn))
 
 	for {
 		status, err := tp.ReadLine()
 		if err != nil {
-			panic(err)
+			fmt.Println(err)
 		}
 
 		// If message starts with PING we must respond with PONG
@@ -84,6 +97,22 @@ func (c *Client) Listen() {
 			if !exists {
 				users[currentUser] = colors[rand.Intn(len(colors))]
 			}
+
+			// TODO: Check width of terminal and push wrapped lines
+			// to fit the first line.
+			//
+			// Resources:
+			//	- https://stackoverflow.com/questions/16569433/get-terminal-size-in-go
+			//  - https://pkg.go.dev/golang.org/x/term
+			//
+			// width, height, err := term.GetSize(0)
+			//
+			// Example:
+			// [10:37:37]        tommyluco | this is also why the finding waldo games are
+			//                             | so "hard" because you cant refer to memory
+			//
+			//
+
 			fmt.Printf("[%s] ", msg.Timestamp.Format("15:04:05"))
 			fmt.Printf("%25s", msg.Colorize(users[currentUser], msg.Username))
 			fmt.Printf(" | %s\n", msg.Content)
